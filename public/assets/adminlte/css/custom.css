@@ -1,0 +1,617 @@
+.brand-link {
+  background: #0a2a66;
+}
+
+.nav-sidebar .nav-link.active {
+  background-color: #b11226;
+  color: #fff;
+}
+
+.nav-header {
+  color: #adb5bd;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+}
+
+.main-footer {
+  background: #0b0b0b;
+  color: #fff;
+  border-top: 3px solid #b11226;
+}
+
+.main-footer a {
+  color: #fff;
+  font-weight: 600;
+}
+
+.main-footer a:hover {
+  color: #b11226;
+}
+
+/* ===== Design Tokens ===== */
+:root{
+  --blue:#0a2a66; --red:#b11226; --black:#0b0b0b; --white:#fff; --grey:#f4f4f4;
+  --primary:var(--blue); --accent:var(--red); --dark:var(--black);
+  --radius:8px; --shadow:0 10px 30px rgba(0,0,0,.18);
+}
+
+/* ===== Base ===== */
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,system-ui,sans-serif;color:var(--black);background:#fff}
+h1,h2{font-family:Oswald,Inter,sans-serif;letter-spacing:.02em}
+.container{max-width:1200px;margin:auto;padding:1.25rem}
+
+/* ===== Header ===== */
+.site-header{background:var(--dark);border-bottom:4px solid var(--accent)}
+.site-header .container{display:flex;align-items:center;justify-content:space-between}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.club-logo {
+  height: 40px;
+  width: auto;
+}
+
+.protea-mark {
+  height: 28px;
+  width: auto;
+  opacity: 0.85;
+}
+
+@media (max-width: 768px) {
+  .club-logo {
+    height: 32px;
+  }
+  .protea-mark {
+    height: 22px;
+  }
+}
+
+.nav a{color:#fff;text-decoration:none;margin-left:1rem;font-weight:600}
+.admin-link{color:var(--accent)}
+.nav-toggle{display:none;background:none;border:0;color:#fff;font-size:1.6rem}
+
+/* ===== Hero ===== */
+.hero {
+  position: relative;
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  padding: 4rem 2rem;
+  background: url('../images/hero.jpg') center/cover no-repeat;
+  overflow: hidden;
+}
+
+/* Strong rugby diagonal overlay */
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    120deg,
+    rgba(10,42,102,0.92) 0%,
+    rgba(10,42,102,0.85) 40%,
+    rgba(177,18,38,0.85) 100%
+  );
+}
+
+/* Protea watermark */
+.hero::after {
+  content: '';
+  position: absolute;
+  right: -5%;
+  bottom: -10%;
+  width: 520px;
+  height: 520px;
+  background: url('../images/protea.png') no-repeat center / contain;
+  opacity: 0.06;
+  pointer-events: none;
+}
+
+.hero-content {
+  position: relative;
+  max-width: 700px;
+  color: #fff;
+  z-index: 2;
+}
+
+.hero-content h1 {
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  margin: 0 0 0.5rem;
+  text-transform: uppercase;
+}
+
+.hero-content p {
+  font-size: 1.25rem;
+  margin-bottom: 1.5rem;
+  opacity: 0.95;
+}
+
+
+/* ===== Sections ===== */
+.values{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:2rem auto}
+.card{background:var(--grey);padding:1.5rem;border-left:6px solid var(--accent);
+  box-shadow:var(--shadow);font-weight:700}
+
+/* ===== Footer ===== */
+.site-footer{background:var(--dark);color:#fff;margin-top:3rem}
+.site-footer .container{display:flex;justify-content:center}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px){
+  .nav{display:none;position:absolute;top:100%;right:0;background:#000;padding:1rem}
+  .nav.open{display:block}
+  .nav-toggle{display:block}
+  .values{grid-template-columns:1fr}
+  .hero-protea{width:180px;height:180px}
+}
+
+.page-header{margin-bottom:1.5rem}
+.lead{font-size:1.1rem;opacity:.9}
+.two-col{display:grid;grid-template-columns:1.2fr .8fr;gap:1.5rem}
+.about-image{
+  min-height:260px;border-radius:var(--radius);
+  background:url('../images/hero.jpg') center/cover no-repeat;
+  box-shadow:var(--shadow)
+}
+@media(max-width:768px){.two-col{grid-template-columns:1fr}}
+
+.grid{display:grid;gap:1rem}
+.grid.teams{grid-template-columns:repeat(3,1fr)}
+.team-card{
+  background:var(--grey);padding:1.25rem;border-left:6px solid var(--accent);
+  box-shadow:var(--shadow);border-radius:var(--radius)
+}
+@media(max-width:900px){.grid.teams{grid-template-columns:1fr}}
+
+.list{list-style:none;padding:0;margin:0}
+.list.fixtures li{
+  display:grid;grid-template-columns:120px 1fr 120px;
+  padding:.9rem;border-bottom:1px solid #ddd;align-items:center
+}
+.list .date{font-weight:700}
+.list .venue{color:var(--accent);text-align:right}
+@media(max-width:768px){
+  .list.fixtures li{grid-template-columns:1fr}
+  .list .venue{text-align:left}
+}
+
+.results{display:grid;gap:.75rem}
+.result{
+  padding:1rem;background:#fff;border-left:6px solid var(--primary);
+  box-shadow:var(--shadow);border-radius:var(--radius)
+}
+.fixtures-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:1.2rem;
+}
+
+.fixture-card{
+  background:#fff;
+  border-left:6px solid var(--accent);
+  padding:1.2rem;
+  box-shadow:var(--shadow);
+  position:relative;
+}
+
+.fixture-date{
+  font-weight:700;
+  color:var(--primary);
+}
+
+.fixture-match{
+  font-size:1.2rem;
+  margin:.4rem 0;
+}
+
+.fixture-venue.home{
+  color:var(--primary);
+  font-weight:600;
+}
+
+.fixture-venue.away{
+  color:var(--accent);
+  font-weight:600;
+}
+.fixture-month{
+  margin-top:2rem;
+  padding-bottom:.4rem;
+  border-bottom:3px solid var(--accent);
+  color:var(--primary);
+}
+
+.fixture-date-row{
+  margin-top:1rem;
+  font-weight:700;
+  color:#333;
+}
+/* ULTRA HERO */
+.ultra-register-hero{
+background:linear-gradient(120deg,#0a2a66,#b11226);
+padding:100px 0;
+position:relative;
+overflow:hidden;
+}
+
+.ultra-register-hero::after{
+content:'';
+position:absolute;
+right:-5%;
+bottom:-10%;
+width:520px;
+height:520px;
+background:url('../images/protea.png') no-repeat center/contain;
+opacity:.05;
+}
+
+/* Wizard Card */
+.wizard-card{
+background:rgba(255,255,255,.96);
+padding:40px;
+border-radius:16px;
+box-shadow:0 30px 90px rgba(0,0,0,.3);
+max-width:650px;
+margin:auto;
+}
+
+/* Steps */
+.wizard-step{
+display:none;
+animation:fadeIn .4s ease;
+}
+
+.wizard-step.active{
+display:block;
+}
+
+@keyframes fadeIn{
+from{opacity:0;transform:translateY(20px);}
+to{opacity:1;transform:translateY(0);}
+}
+
+/* Inputs */
+.ultra-input{
+border-radius:10px;
+padding:12px;
+}
+
+.ultra-input:focus{
+border-color:#b11226;
+box-shadow:0 0 0 .2rem rgba(177,18,38,.2);
+}
+
+/* Button */
+.btn-ultra-rugby{
+background:#b11226;
+color:#fff;
+border-radius:10px;
+padding:12px 28px;
+font-weight:800;
+}
+/* ===== ULTRA RUGBY WIZARD ===== */
+
+.wizard-card{
+    background:#0b0b0b;
+    border-radius:14px;
+    padding:40px;
+    box-shadow:0 25px 60px rgba(0,0,0,.6);
+    border-top:4px solid #b11226;
+    color:#fff;
+    position:relative;
+    overflow:hidden;
+}
+
+.wizard-title{
+    font-family:Oswald;
+    text-transform:uppercase;
+    margin-bottom:25px;
+}
+
+/* Progress bar */
+.wizard-progress{
+    height:6px;
+    background:#1c1c1c;
+    border-radius:5px;
+    margin-bottom:25px;
+    overflow:hidden;
+}
+
+.wizard-progress-bar{
+    height:100%;
+    width:33%;
+    background:linear-gradient(90deg,#0a2a66,#b11226);
+    transition:width .4s ease;
+}
+
+/* Step indicators */
+.wizard-steps-indicator{
+    text-align:center;
+    margin-bottom:25px;
+}
+
+.step-dot{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:35px;
+    height:35px;
+    border-radius:50%;
+    background:#222;
+    margin:0 6px;
+    font-weight:bold;
+    transition:.3s;
+}
+
+.step-dot.active{
+    background:#b11226;
+    transform:scale(1.1);
+}
+
+/* Step animation */
+.wizard-step{
+    display:none;
+    opacity:0;
+    transform:translateX(40px);
+    transition:.4s ease;
+}
+
+.wizard-step.active{
+    display:block;
+    opacity:1;
+    transform:translateX(0);
+}
+
+/* Rugby input styling */
+.ultra-input{
+    background:#121212;
+    border:1px solid #333;
+    color:#fff;
+}
+
+.ultra-input:focus{
+    border-color:#b11226;
+    box-shadow:0 0 10px rgba(177,18,38,.3);
+}
+
+.btn-ultra-rugby{
+    background:#b11226;
+    border:none;
+    font-weight:700;
+    text-transform:uppercase;
+}
+/* SUCCESS PANEL */
+.register-success{
+    padding:60px 20px;
+}
+
+.success-title{
+    font-family:Oswald;
+    text-transform:uppercase;
+    font-size:32px;
+    color:#fff;
+}
+
+.register-success p{
+    color:#ccc;
+    font-size:16px;
+}
+
+/* ===== ULTRA RUGBY PROGRESS BAR ===== */
+
+.wizard-progress{
+    height:6px;
+    background:#1c1c1c;
+    border-radius:6px;
+    overflow:hidden;
+    margin-bottom:25px;
+    position:relative;
+}
+
+.wizard-bar{
+    height:100%;
+    width:100%;
+    background:transparent;
+}
+
+.wizard-bar-fill{
+    height:100%;
+    width:0%;
+    background:linear-gradient(90deg,var(--primary),var(--accent));
+    box-shadow:0 0 12px rgba(177,18,38,.5);
+    transition:width .35s ease;
+}
+
+.step-complete{
+    border-left:4px solid #28a745;
+}
+
+.wizard-bar-fill::after{
+    content:'';
+    position:absolute;
+    right:0;
+    top:0;
+    width:20px;
+    height:100%;
+    background:rgba(255,255,255,.25);
+    filter:blur(6px);
+}
+
+/* ===== AUTOSAVE STATUS ===== */
+
+.autosave-status{
+    position:absolute;
+    top:20px;
+    right:25px;
+    font-size:12px;
+    font-weight:700;
+    letter-spacing:.05em;
+}
+
+#autosaveIndicator{
+    padding:4px 10px;
+    border-radius:20px;
+    background:#111;
+    color:#aaa;
+    transition:.25s ease;
+}
+
+/* States */
+#autosaveIndicator.saving{
+    color:#ffc107;
+}
+
+#autosaveIndicator.saved{
+    color:#28a745;
+}
+
+#autosaveIndicator.error{
+    color:#dc3545;
+}
+
+img.rounded-circle {
+    border: 2px solid #0d6efd;
+}
+
+#photoPreview{
+    width:220px;
+    height:220px;
+    border-radius:10px;
+    border:1px solid #ccc;
+}
+
+.avatar-editor {
+    position: relative;
+    width: 220px;
+    height: 220px;
+}
+
+.avatar-mask {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
+    box-shadow: 0 0 0 2000px rgba(0,0,0,0.4);
+    pointer-events: none;
+}
+
+#rugbyLoader{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:#0f172a;
+display:none;
+align-items:center;
+justify-content:center;
+flex-direction:column;
+z-index:9999;
+color:#fff;
+}
+
+/* Rugby field */
+
+.pitch{
+width:320px;
+height:120px;
+background:#15803d;
+border-radius:8px;
+position:relative;
+overflow:hidden;
+border:3px solid #0b5d2a;
+}
+
+/* Field lines */
+
+.pitch:before,
+.pitch:after{
+content:"";
+position:absolute;
+left:0;
+right:0;
+height:4px;
+background:white;
+}
+
+.pitch:before{
+top:35%;
+}
+
+.pitch:after{
+top:65%;
+}
+
+/* Rugby ball */
+
+.rugby-ball{
+width:40px;
+height:25px;
+background:#8B4513;
+border-radius:50%/60%;
+position:absolute;
+top:50%;
+left:-50px;
+transform:translateY(-50%);
+animation:runBall 1.6s linear infinite;
+}
+
+.rugby-ball:before{
+content:"";
+position:absolute;
+top:50%;
+left:0;
+right:0;
+height:3px;
+background:white;
+transform:translateY(-50%);
+}
+
+/* Ball running across pitch */
+
+@keyframes runBall{
+0%{left:-50px;}
+100%{left:360px;}
+}
+
+.loaderText{
+margin-top:20px;
+font-size:16px;
+font-weight:600;
+letter-spacing:1px;
+}
+
+.approvalBar{
+display:flex;
+gap:20px;
+margin:20px 0;
+}
+
+.approvalStep{
+flex:1;
+border:2px solid #ccc;
+padding:10px;
+text-align:center;
+border-radius:6px;
+}
+
+.approvalStep.approved{
+background:#16a34a;
+color:white;
+border-color:#16a34a;
+}
+
+.tab-btn {
+    background:#2c2c2c;
+    color:#ffffff;
+    border:1px solid #555;
+}
+
+.tab-btn:hover {
+    background:#444;
+}
