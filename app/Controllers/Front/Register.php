@@ -62,7 +62,7 @@ class Register extends BaseController
 
         /* ---------------- MODELS ---------------- */
 
-        $userModel     = new \App\Models\UserModel();
+        $userModel     = new UserModel();
         $settingsModel = new \App\Models\SettingsModel();
 
         /* ---------------- DATA ---------------- */
@@ -221,7 +221,7 @@ class Register extends BaseController
     {
         $email = $this->request->getPost('email');
 
-        $exists = (new \App\Models\UserModel())
+        $exists = (new UserModel())
             ->where('email', $email)
             ->first();
 

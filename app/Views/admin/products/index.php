@@ -28,6 +28,7 @@
 						<th>Type</th>
 						<th>Sell Price</th>
 						<th>Status</th>
+						<th>Actions</th>
 					</tr>
 
 				</thead>
@@ -43,6 +44,11 @@
 						<td><?= esc($p['product_type']) ?></td>
 						<td>R<?= $p['sell_price'] ?></td>
 						<td><?= $p['active'] ? 'Active' : 'Disabled' ?></td>
+						<td width="160">
+							<a href="<?= site_url('admin/products/edit/'.encode_id($p['id'])) ?>" class="btn btn-warning btn-sm">
+								<i class="fas fa-edit"></i> Edit
+							</a>
+						</td>
 
 					</tr>
 

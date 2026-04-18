@@ -91,27 +91,33 @@
                                          class="img-thumbnail mb-2"
                                          style="width:200px;height:200px;border-radius:50%;object-fit:cover;">
 
-                                    <div class="d-flex justify-content-center gap-2">
+                                    <div class="d-flex justify-content-center gap-3">
 
                                     <button type="button"
                                             class="btn btn-primary btn-sm"
-                                            onclick="document.getElementById('photo').click()">
+                                            onclick="document.getElementById('photo_camera').click()">
                                     📷 Take Photo
                                     </button>
 
                                     <button type="button"
                                             class="btn btn-outline-secondary btn-sm"
-                                            onclick="document.getElementById('photo').click()">
+                                            onclick="document.getElementById('photo_gallery').click()">
                                     Upload
                                     </button>
 
                                     </div>
 
                                     <input type="file"
-                                           name="photo"
-                                           id="photo"
+                                           name="photo_camera"
+                                           id="photo_camera"
                                            accept="image/*"
                                            capture="environment"
+                                           style="display:none">
+
+                                    <input type="file"
+                                           name="photo_gallery"
+                                           id="photo_gallery"
+                                           accept="image/*"
                                            style="display:none">
 
                                     </div>
@@ -748,44 +754,55 @@ const LOCAL_KEY = 'profileDraft_' + USER_ID;
 ========================= */
 
 document.addEventListener("DOMContentLoaded", function () {
-
-    const photoInput = document.getElementById('photo');
+    // Use either camera or gallery input
+    const photoCamera = document.getElementById('photo_camera');
+    const photoGallery = document.getElementById('photo_gallery');
     const preview = document.getElementById('photoPreview');
 
-    if(!photoInput) return;
+    function handlePhotoInput(input) {
+        input.addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            if (!file.type.startsWith("image/")) {
+                alert("Please select a valid image file.");
+                input.value = "";
+                return;
+            }
+            if (file.size > 5 * 1024 * 1024) {
+                alert("Image must be smaller than 5MB.");
+                input.value = "";
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = function (event) {
+                preview.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+    handlePhotoInput(photoCamera);
+    handlePhotoInput(photoGallery);
 
-    photoInput.addEventListener('change', function (e) {
-
-        const file = e.target.files[0];
-
-        if (!file) return;
-
-        // Validate image
-        if (!file.type.startsWith("image/")) {
-            alert("Please select a valid image file.");
-            photoInput.value = "";
-            return;
+    // On form submit, copy whichever file is selected to a hidden main input for server upload
+    const form = document.getElementById('profileWizard');
+    form.addEventListener('submit', function(e) {
+        // Remove any previous hidden input
+        let existing = document.getElementById('photo_main');
+        if(existing) existing.remove();
+        let fileInput = photoCamera.files[0] ? photoCamera : photoGallery;
+        if(fileInput.files.length) {
+            const mainInput = document.createElement('input');
+            mainInput.type = 'file';
+            mainInput.name = 'photo';
+            mainInput.id = 'photo_main';
+            mainInput.style.display = 'none';
+            form.appendChild(mainInput);
+            // Copy file to main input using DataTransfer
+            const dt = new DataTransfer();
+            dt.items.add(fileInput.files[0]);
+            mainInput.files = dt.files;
         }
-
-        // Limit size (5MB)
-        if (file.size > 5 * 1024 * 1024) {
-            alert("Image must be smaller than 5MB.");
-            photoInput.value = "";
-            return;
-        }
-
-        const reader = new FileReader();
-
-        reader.onload = function (event) {
-
-            preview.src = event.target.result;
-
-        };
-
-        reader.readAsDataURL(file);
-
     });
-
 });
 
 document.addEventListener("DOMContentLoaded", function(){

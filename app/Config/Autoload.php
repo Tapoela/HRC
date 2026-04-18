@@ -90,5 +90,5 @@ class Autoload extends AutoloadConfig
      *
      * @var list<string>
      */
-    public $helpers = ['honeypot','role'];
+    public $helpers = ['honeypot', 'role', 'hashids'];
 }

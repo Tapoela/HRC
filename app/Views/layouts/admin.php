@@ -1,36 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <style>
-    /* ===== FIX ADMINLTE WHITE TEXT IN MODAL TABS ===== */
-
-    #editUserModal .nav-tabs .nav-link {
-        color: #495057 !important;
-    }
-
-    #editUserModal .nav-tabs .nav-link.active {
-        color: #007bff !important;
-        background-color: #fff !important;
-    }
-
-    #editUserModal label,
-    #editUserModal .form-group,
-    #editUserModal .form-control {
-        color: #212529 !important;
-    }
-  </style>
-
   <meta charset="utf-8">
   <title>HRC Admin</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="<?= base_url('assets/adminlte/plugins/fontawesome-free/css/all.min.css') ?>">
+  <!-- AdminLTE + Bootstrap + FontAwesome from CDN (reliable, no local path issues) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
 
-  <!-- AdminLTE CSS -->
-  <link rel="stylesheet" href="<?= base_url('assets/adminlte/dist/css/adminlte.min.css') ?>">
-
-  <!-- Custom Admin Styles -->
+  <!-- Custom Admin Styles (HRC colours, sidebar colours only) -->
   <link rel="stylesheet" href="<?= base_url('assets/adminlte/css/custom.css') ?>">
 </head>
 
@@ -57,54 +37,32 @@
 
 </div>
 
-<!-- jQuery -->
-<script src="<?= base_url('assets/adminlte/plugins/jquery/jquery.min.js') ?>"></script>
-
-<!-- Bootstrap -->
-<script src="<?= base_url('assets/adminlte/plugins/bootstrap/js/bootstrap.bundle.min.js') ?>"></script>
-
-<!-- AdminLTE -->
-<script src="<?= base_url('assets/adminlte/dist/js/adminlte.min.js') ?>"></script>
+<!-- jQuery, Bootstrap, AdminLTE JS from CDN -->
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js"></script>
 
 <?= $this->renderSection('scripts') ?>
 
 <div id="rugbyLoader">
-
-    <div class="pitch">
-
-        <div class="rugby-ball"></div>
-
-    </div>
-
-    <div class="loaderText">
-        Preparing the pitch...
-    </div>
-
+    <div class="pitch"><div class="rugby-ball"></div></div>
+    <div class="loaderText">Preparing the pitch...</div>
 </div>
 
 <script>
-function showLoader(){
-
-document.getElementById("rugbyLoader").style.display="flex";
-
-}
-
-function hideLoader(){
-
-document.getElementById("rugbyLoader").style.display="none";
-
-}
+function showLoader(){ document.getElementById("rugbyLoader").style.display="flex"; }
+function hideLoader(){ document.getElementById("rugbyLoader").style.display="none"; }
 
 document.querySelectorAll("a").forEach(link => {
-
-link.addEventListener("click", function(e){
-
-if(this.target !== "_blank" && !this.classList.contains("no-loader")){
-showLoader();
-}
-
-});
-
+  link.addEventListener("click", function(e){
+    if (
+      this.target !== "_blank" &&
+      !this.classList.contains("no-loader") &&
+      this.getAttribute("data-widget") !== "pushmenu"
+    ) {
+      showLoader();
+    }
+  });
 });
 </script>
 

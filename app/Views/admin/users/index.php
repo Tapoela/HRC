@@ -58,7 +58,7 @@
       <td width="180">
 
         <?php if($u['active'] == 0): ?>
-          <a href="/admin/users/approve/<?= $u['id'] ?>"
+          <a href="/admin/users/approve/<?= encode_id($u['id']) ?>"
              class="btn btn-success btn-sm">
              <i class="fas fa-check"></i>
           </a>
@@ -76,7 +76,7 @@
       </td>
       <td width="160">
 
-          <a href="<?= site_url('admin/users/print/'.$u['id']) ?>"
+          <a href="<?= site_url('admin/users/print/'.encode_id($u['id'])) ?>"
              target="_blank"
              class="btn btn-info btn-sm">
              <i class="fas fa-print"></i>
@@ -84,11 +84,11 @@
 
           <a href="#"
              class="btn btn-warning btn-sm btn-edit-user"
-             data-id="<?= $u['id'] ?>">
+             data-id="<?= encode_id($u['id']) ?>">
              <i class="fas fa-edit"></i>
           </a>
 
-          <a href="<?= base_url('admin/users/card/'.$u['id']) ?>"
+          <a href="<?= base_url('admin/users/card/'.encode_id($u['id'])) ?>"
             class="btn btn-primary btn-sm">
 
             Generate Card

@@ -10,7 +10,7 @@ class Profile extends BaseController
     public function setup()
     {
         $settings   = new \App\Models\SettingsModel();
-        $userModel  = new \App\Models\UserModel();
+        $userModel  = new UserModel();
         $draftModel = new \App\Models\UserProfileDraftModel();
 
         $db = \Config\Database::connect();
@@ -78,7 +78,7 @@ class Profile extends BaseController
     {
         //dd($this->request->getFiles());
 
-        $userModel = new \App\Models\UserModel();
+        $userModel = new UserModel();
         $userId    = session()->get('user_id');
 
         if(!$userId){

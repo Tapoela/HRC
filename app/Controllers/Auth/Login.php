@@ -29,12 +29,23 @@ class Login extends BaseController
 
             $success = true;
 
+            // Fetch division name
+            $divisionName = '-';
+            if (!empty($user['division_id'])) {
+                $divisionModel = new \App\Models\DivisionModel();
+                $division = $divisionModel->find($user['division_id']);
+                if ($division && !empty($division['name'])) {
+                    $divisionName = $division['name'];
+                }
+            }
+
             session()->set([
                 'user_id'   => $user['id'],
                 'name'      => $user['name'],
                 'role_id'   => $user['role_id'],
                 'role_name' => strtolower(trim($user['role'])),
                 'division_id' => $user['division_id'],
+                'division_name' => $divisionName,
                 'logged_in' => true,
                 'profile_completed' => $user['profile_completed'] ?? 0,
             ]);

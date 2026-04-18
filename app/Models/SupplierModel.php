@@ -18,5 +18,7 @@ class SupplierModel extends Model
         'active'
     ];
 
+    protected $returnType = 'array';
+
     protected $useTimestamps = false;
 }

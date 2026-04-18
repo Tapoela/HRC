@@ -105,19 +105,23 @@
 					<div class="form-group">
 					    <label>Register As</label>
 
+					    <?php if (!empty($roles) && is_array($roles)): ?>
 					    <select name="role_id" class="form-control ultra-input" required>
 
 					        <option value="">Select...</option>
 
 					        <?php foreach($roles as $role): ?>
 
-					            <option value="<?= $role->id ?>">
-					                <?= esc($role->name) ?>
+					            <option value="<?= isset($role->id) ? $role->id : '' ?>">
+					                <?= isset($role->name) ? esc($role->name) : '' ?>
 					            </option>
 
 					        <?php endforeach; ?>
 
 					    </select>
+					    <?php else: ?>
+					        <div class="alert alert-warning">No roles available.</div>
+					    <?php endif; ?>
 
 					</div>
 
@@ -146,7 +150,7 @@
 
 				<div class="d-flex justify-content-between mt-3">
 				<button type="button" class="btn btn-ultra-rugby-outline prevStep">Back</button>
-				<button id="registerBtn" class="btn btn-ultra-rugby">Register Player</button>
+				<button id="registerBtn" class="btn btn-ultra-rugby" type="submit">Register Player</button>
 				</div>
 
 				</div>
@@ -168,129 +172,105 @@
 <?= $this->section('scripts') ?>
 <script>
 
-document.addEventListener('DOMContentLoaded', function(){
+document.addEventListener('DOMContentLoaded', function() {
+  // Force the first wizard step to be active
+  document.querySelectorAll('.wizard-step').forEach((el, i) => {
+    el.classList.toggle('active', i === 0);
+  });
 
-let stepIndex = 0;
-const steps = document.querySelectorAll('.wizard-step');
-const dots  = document.querySelectorAll('.step-dot');
-const bar   = document.querySelector('.wizard-progress-bar');
+  let stepIndex = 0;
+  const steps = document.querySelectorAll('.wizard-step');
+  const dots  = document.querySelectorAll('.step-dot');
+  const bar   = document.querySelector('.wizard-progress-bar');
 
-function showStep(i){
+  function showStep(i){
+      steps.forEach(s => s.classList.remove('active'));
+      dots.forEach(d => d.classList.remove('active'));
+      if(steps[i]) steps[i].classList.add('active');
+      if(dots[i])  dots[i].classList.add('active');
+      let percent = ((i+1) / steps.length) * 100;
+      bar.style.width = percent + '%';
+      document.querySelector('.wizard-card')
+          .scrollIntoView({behavior:'smooth', block:'start'});
+  }
 
-    steps.forEach(s => s.classList.remove('active'));
-    dots.forEach(d => d.classList.remove('active'));
+  document.querySelectorAll('.nextStep').forEach(btn=>{
+      btn.addEventListener('click',function(){
+          if(stepIndex < steps.length-1){
+              stepIndex++;
+              showStep(stepIndex);
+          }
+      });
+  });
 
-    if(steps[i]) steps[i].classList.add('active');
-    if(dots[i])  dots[i].classList.add('active');
+  document.querySelectorAll('.prevStep').forEach(btn=>{
+      btn.addEventListener('click',function(){
+          if(stepIndex > 0){
+              stepIndex--;
+              showStep(stepIndex);
+          }
+      });
+  });
 
-    /* progress animation */
-    let percent = ((i+1) / steps.length) * 100;
-    bar.style.width = percent + '%';
+  document.querySelector('[name="role_id"]').addEventListener('change',function(){
+      const division = document.querySelector('[name="division_id"]');
+      if(this.options[this.selectedIndex].text.toLowerCase() === 'coach'){
+          division.disabled = true;
+      }else{
+          division.disabled = false;
+      }
+  });
 
-    /* smooth scroll */
-    document.querySelector('.wizard-card')
-        .scrollIntoView({behavior:'smooth', block:'start'});
-}
-
-/* NEXT */
-document.querySelectorAll('.nextStep').forEach(btn=>{
-    btn.addEventListener('click',function(){
-        if(stepIndex < steps.length-1){
-            stepIndex++;
-            showStep(stepIndex);
-        }
-    });
-});
-
-/* PREV */
-document.querySelectorAll('.prevStep').forEach(btn=>{
-    btn.addEventListener('click',function(){
-        if(stepIndex > 0){
-            stepIndex--;
-            showStep(stepIndex);
-        }
-    });
-});
-
-document.querySelector('[name="role_id"]').addEventListener('change',function(){
-
-    const division = document.querySelector('[name="division_id"]');
-
-    if(this.options[this.selectedIndex].text.toLowerCase() === 'coach'){
-        division.disabled = true;
-    }else{
-        division.disabled = false;
-    }
-
-});
-
-/* EMAIL CHECK */
-document.getElementById('email')?.addEventListener('keyup', function(){
-
-if(stepIndex === 1){
-    const fb = document.getElementById('emailFeedback');
-    if(fb.innerText.includes('already')){
-        return;
-    }
-}
-
-let emailTimer;
-
-document.getElementById('email')?.addEventListener('keyup', function(){
-
-clearTimeout(emailTimer);
-
-emailTimer = setTimeout(()=>{
-
-    let email = this.value;
-    if(email.length < 5) return;
-
-    fetch('/register/check-email',{
-        method:'POST',
-        headers:{'Content-Type':'application/x-www-form-urlencoded'},
-        body:'email='+encodeURIComponent(email)
-    })
-    .then(r=>r.json())
-    .then(res=>{
+  document.getElementById('email')?.addEventListener('keyup', function(){
+    if(stepIndex === 1){
         const fb = document.getElementById('emailFeedback');
-        const registerBtn = document.getElementById('registerBtn');
-
-        if(res.exists){
-            fb.innerHTML='❌ Email already registered';
-            fb.style.color='red';
-            registerBtn.disabled=true;
-        }else{
-            fb.innerHTML='✔ Email available';
-            fb.style.color='limegreen';
-            registerBtn.disabled=false;
+        if(fb.innerText.includes('already')){
+            return;
         }
+    }
+    let emailTimer;
+    document.getElementById('email')?.addEventListener('keyup', function(){
+      clearTimeout(emailTimer);
+      emailTimer = setTimeout(()=>{
+        let email = this.value;
+        if(email.length < 5) return;
+        fetch('/register/check-email',{
+            method:'POST',
+            headers:{'Content-Type':'application/x-www-form-urlencoded'},
+            body:'email='+encodeURIComponent(email)
+        })
+        .then(r=>r.json())
+        .then(res=>{
+            const fb = document.getElementById('emailFeedback');
+            const registerBtn = document.getElementById('registerBtn');
+            if(res.exists){
+                fb.innerHTML='❌ Email already registered';
+                fb.style.color='red';
+                registerBtn.disabled=true;
+            }else{
+                fb.innerHTML='✔ Email available';
+                fb.style.color='limegreen';
+                registerBtn.disabled=false;
+            }
+        });
+      },500);
     });
+  });
 
-},500);
-
-});
-
-});
-
-/* PASSWORD STRENGTH */
-document.getElementById('password')?.addEventListener('keyup',function(){
-
-let val=this.value;
-let strength="Weak",color="red";
-
-if(val.length>7 && /[A-Z]/.test(val) && /\d/.test(val)){
-    strength="Strong";color="limegreen";
-}else if(val.length>5){
-    strength="Medium";color="orange";
-}
-
-let s=document.getElementById('passwordStrength');
-if(s){
-    s.innerText="Strength: "+strength;
-    s.style.color=color;
-}
-
-});
+  document.getElementById('password')?.addEventListener('keyup',function(){
+    let val=this.value;
+    let strength="Weak",color="red";
+    if(val.length>7 && /[A-Z]/.test(val) && /\d/.test(val)){
+        strength="Strong";color="limegreen";
+    }else if(val.length>5){
+        strength="Medium";color="orange";
+    }
+    let s=document.getElementById('passwordStrength');
+    if(s){
+        s.innerText="Strength: "+strength;
+        s.style.color=color;
+    }
+  });
 
 });
 </script>

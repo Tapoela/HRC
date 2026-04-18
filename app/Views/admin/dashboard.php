@@ -5,35 +5,38 @@
 
 <div class="row g-3">
 
-    <!-- 🔶 Pending PO Approvals -->
-    <div class="col-12 col-md-6 col-lg-4">
+    <?php if (in_array((int)session('role_id'), [1,4,5,6])): ?>
+        <!-- 🔶 Pending PO Approvals -->
+        <div class="col-12 col-md-6 col-lg-4">
 
-        <div class="card shadow-sm border-0 h-100">
+            <div class="card shadow-sm border-0 h-100">
 
-            <div class="card-body d-flex flex-column justify-content-between">
+                <div class="card-body d-flex flex-column justify-content-between">
 
-                <div>
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <h6 class="text-muted mb-0">Pending PO Approvals</h6>
-                        <i class="fas fa-file-signature text-warning"></i>
+                    <div>
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h6 class="text-muted mb-0">Pending PO Approvals</h6>
+                            <i class="fas fa-file-signature text-warning"></i>
+                        </div>
+
+                        <h2 class="fw-bold"><?= $pendingPOCount ?></h2>
                     </div>
 
-                    <h2 class="fw-bold"><?= $pendingPOCount ?></h2>
-                </div>
+                    <a href="<?= site_url('admin/purchaseorders') ?>"
+                       class="btn btn-warning btn-sm w-100 mt-3">
+                       View Purchase Orders
+                    </a>
 
-                <a href="<?= site_url('admin/purchaseorders') ?>"
-                   class="btn btn-warning btn-sm w-100 mt-3">
-                   View Purchase Orders
-                </a>
+                </div>
 
             </div>
 
         </div>
-
-    </div>
+    <?php endif; ?>
 
 
     <!-- 🔵 Pending Player Approvals -->
+    <?php if (session('role_name') !== 'player'): ?>
     <div class="col-12 col-md-6 col-lg-8">
 
         <div class="card shadow-sm border-0 h-100">
@@ -74,7 +77,7 @@
                                 <small class="text-muted"><?= esc($u['email']) ?></small>
                             </div>
 
-                            <a href="<?= site_url('admin/users/approve/'.$u['id']) ?>"
+                            <a href="<?= site_url('admin/users/approve/'.encode_id($u['id'])) ?>"
                                class="btn btn-success btn-sm mt-2 mt-md-0">
                                <i class="fas fa-check"></i> Approve
                             </a>
@@ -90,14 +93,17 @@
             </div>
 
             <div class="card-footer bg-white text-center border-0">
+                <?php if (in_array((int)session('role_id'), [1,4,5,6])): ?>
                 <a href="<?= site_url('admin/users') ?>" class="small">
                     View All Users
                 </a>
+                <?php endif; ?>
             </div>
 
         </div>
 
     </div>
+    <?php endif; ?>
 
 </div>
 

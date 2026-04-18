@@ -12,6 +12,8 @@ class SaleItemModel extends Model
         'sale_id',
         'product_id',
         'qty',
-        'price'
+        'price',
+        'special_id',
+        'special_name'
     ];
 }

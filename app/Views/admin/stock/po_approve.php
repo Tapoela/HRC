@@ -224,7 +224,7 @@ headers:{
 
 body:JSON.stringify({
 
-po_id:<?= $po['id'] ?>,
+po_id:"<?= encode_id($po['id']) ?>",
 signature:signaturePad.toDataURL()
 
 })

@@ -24,7 +24,6 @@
 
 <?= $this->include('public/partials/footer') ?>
 
-<script src="<?= base_url('assets/adminlte/plugins/jquery/jquery.min.js') ?>"></script>
 <script src="<?= base_url('assets/public/js/site.js') ?>"></script>
 
 <?= $this->renderSection('scripts') ?>

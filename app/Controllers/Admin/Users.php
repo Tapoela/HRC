@@ -9,8 +9,8 @@ use Dompdf\Dompdf;
 use Dompdf\Options;
 
 class Users extends BaseAdmin
-
 {
+    use DecodesHashId;
 
     public function index()
     {
@@ -53,8 +53,9 @@ class Users extends BaseAdmin
             ->with('success','User created');
     }
 
-    public function approve($id)
+    public function approve($hash)
     {
+        $id = $this->decodeHash($hash);
         $userModel = new \App\Models\UserModel();
 
         $user = $userModel->find($id);
@@ -115,8 +116,9 @@ class Users extends BaseAdmin
         $emailService->send();
     }
 
-   public function unlock($id)
+   public function unlock($hash)
     {
+        $id = $this->decodeHash($hash);
         $model = new \App\Models\UserModel();
         $db    = \Config\Database::connect();
 
@@ -164,16 +166,18 @@ class Users extends BaseAdmin
         ]);
     }
 
-    public function printProfile($id)
+    public function printProfile($hash)
     {
+        $id = $this->decodeHash($hash);
         $userModel = new \App\Models\UserModel();
         $data['user'] = $userModel->find($id);
 
         return view('admin/users/print_profile', $data);
     }
 
-    public function getUser($id)
+    public function getUser($hash)
     {
+        $id = $this->decodeHash($hash);
         $model = new \App\Models\UserModel();
 
         $user = $model->find($id);
@@ -186,8 +190,9 @@ class Users extends BaseAdmin
         return $this->response->setJSON($user); // ✅ send ALL columns
     }
 
-    public function update($id)
+    public function update($hash)
     {
+        $id = $this->decodeHash($hash);
         $model = new UserModel();
         $service = new \App\Libraries\UserProfileService();
 
@@ -239,8 +244,9 @@ class Users extends BaseAdmin
         ]);
     }
 
-    public function pdf($id)
+    public function pdf($hash)
     {
+        $id = $this->decodeHash($hash);
         $model = new \App\Models\UserModel();
 
         $user = $model->find($id);
@@ -272,8 +278,9 @@ class Users extends BaseAdmin
             ->setBody($dompdf->output());
     }
 
-    public function generateCard($id)
+    public function generateCard($hash)
     {
+        $id = $this->decodeHash($hash);
         $db = \Config\Database::connect();
 
         $user = $db->table('users u')

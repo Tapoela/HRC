@@ -261,7 +261,7 @@ let poItems = <?= json_encode($items ?? []) ?>;
 
 	});
 
-	let saveUrl = "<?= site_url('admin/purchaseorders/update/'.$po['id']) ?>";
+	let saveUrl = "<?= site_url('admin/purchaseorders/update/'.encode_id($po['id'])) ?>";
 
 
 

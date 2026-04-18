@@ -95,7 +95,7 @@
 						<td>
 
 							<!-- VIEW -->
-							<a href="<?= site_url('admin/purchaseorders/view/'.$order['id']) ?>"
+							<a href="<?= site_url('admin/purchaseorders/view/'.encode_id($order['id'])) ?>"
 							class="btn btn-info btn-sm">
 							View
 							</a>
@@ -104,7 +104,7 @@
 							<!-- EDIT (only before approval) -->
 							<?php if(strtolower($order['approval_status']) !== 'approved'): ?>
 
-							<a href="<?= site_url('admin/purchaseorders/edit/'.$order['id']) ?>"
+							<a href="<?= site_url('admin/purchaseorders/edit/'.encode_id($order['id'])) ?>"
 							class="btn btn-warning btn-sm">
 							Edit
 							</a>
@@ -115,11 +115,11 @@
 							<!-- APPROVE -->
 							<?php if(
 							    strtolower($order['approval_status']) !== 'approved' &&
-							    $order['status'] !== 'completed' &&   // 🔥 ADD THIS
+							    $order['status'] !== 'completed' &&
 							    $order['next_approver_role_id'] == session('role_id')
 							): ?>
 
-							<a href="<?= site_url('admin/purchaseorders/approve/'.$order['id']) ?>"
+							<a href="<?= site_url('admin/purchaseorders/approve/'.encode_id($order['id'])) ?>"
 							class="btn btn-success btn-sm">
 							Approve
 							</a>
@@ -130,7 +130,7 @@
 							<!-- PDF -->
 							<?php if($order['approval_status'] == 'approved'): ?>
 
-							<a href="<?= site_url('admin/purchaseorders/pdf/'.$order['id']) ?>" 
+							<a href="<?= site_url('admin/purchaseorders/pdf/'.encode_id($order['id'])) ?>" 
 							   target="_blank"
 							   class="btn btn-danger btn-sm">
 							   PDF
@@ -141,16 +141,15 @@
 
 							<!-- RECEIVE -->
 							<?php
-							$canApprove =
-							    !empty($order['next_approver_role_id']) &&
-							    (int)$order['next_approver_role_id'] === (int)session('role_id') &&
-							    strtolower($order['approval_status']) !== 'approved' &&
-							    $order['status'] !== 'completed';
+							$canReceive = (
+							    strtolower($order['approval_status']) === 'approved' &&
+							    !in_array(strtolower($order['status']), ['received', 'completed'])
+							);
 							?>
 
-							<?php if($canApprove): ?>
+							<?php if($canReceive): ?>
 
-							<a href="<?= site_url('admin/purchaseorders/receive/'.$order['id']) ?>"
+							<a href="<?= site_url('admin/purchaseorders/receive/'.encode_id($order['id'])) ?>"
 							class="btn btn-primary btn-sm">
 							Receive
 							</a>

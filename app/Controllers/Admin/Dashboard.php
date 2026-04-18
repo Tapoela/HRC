@@ -26,10 +26,10 @@ class Dashboard extends BaseController
             ->where('active',0)
             ->countAllResults();
 
-         // 🔴 ADD THIS (PO approvals for logged-in role)
+        // PO approvals pending for the logged-in user's role
         $pendingPOCount = $approvalModel
-            ->where('LOWER(approver_role)', strtolower(session('role_name')))
-            ->where('status','pending')
+            ->where('approver_role_id', session('role_id'))
+            ->where('status', 'pending')
             ->countAllResults();
 
         $user = $db->table('users u')

@@ -74,6 +74,29 @@ h1,h2{font-family:Oswald,Inter,sans-serif;letter-spacing:.02em}
 .admin-link{color:var(--accent)}
 .nav-toggle{display:none;background:none;border:0;color:#fff;font-size:1.6rem}
 
+/* ===== Admin Navbar mobile fix ===== */
+.main-header.navbar .navbar-nav .nav-link {
+  color: #343a40 !important;
+}
+.main-header.navbar .navbar-nav .nav-link:hover {
+  color: #b11226 !important;
+}
+.main-header.navbar {
+  overflow-x: auto;
+  flex-wrap: nowrap;
+}
+@media (max-width: 768px) {
+  .main-header.navbar .navbar-nav .nav-link span {
+    display: none;
+  }
+  .main-header.navbar .navbar-nav .nav-link i {
+    font-size: 1rem;
+  }
+  .main-header.navbar .navbar-nav .nav-item {
+    white-space: nowrap;
+  }
+}
+
 /* ===== Hero ===== */
 .hero {
   position: relative;
@@ -615,3 +638,46 @@ border-color:#16a34a;
 .tab-btn:hover {
     background:#444;
 }
+
+/* --- AdminLTE sidebar: only color overrides, restore default layout/responsive --- */
+.nav-sidebar .nav-link {
+  color: #fff !important;
+}
+.nav-sidebar .nav-link.active {
+  background-color: #b11226 !important;
+  color: #fff !important;
+}
+.nav-sidebar .nav-icon {
+  color: #fff !important;
+}
+
+/* Always ensure sidebar links are visible */
+.main-sidebar .nav-sidebar .nav-link,
+.main-sidebar .nav-sidebar .nav-link .nav-icon {
+  color: #fff !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* Sidebar background on mobile */
+@media (max-width: 991.98px) {
+  .main-sidebar {
+    background: #0a2a66 !important;
+    z-index: 1051 !important;
+  }
+  .main-sidebar .brand-link,
+  .main-sidebar .user-panel {
+    background: #0a2a66 !important;
+    color: #fff !important;
+  }
+  .main-sidebar .user-panel .info a,
+  .main-sidebar .user-panel .info small {
+    color: #fff !important;
+  }
+}
+
+
+
+
+
+

@@ -16,7 +16,20 @@ class App extends BaseConfig
      *
      * E.g., http://example.com/
      */
-    public string $baseURL = 'http://hrc.local/';
+    // In app/Config/App.php
+    public $baseURL = '';
+
+    public function __construct()
+    {
+        parent::__construct();
+
+        // Dynamically set baseURL if it's empty in .env
+        if (empty($this->baseURL)) {
+            $protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+            $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+            $this->baseURL = $protocol . '://' . $host . '/';
+        }
+    }
 
     public string $sessionDriver = 'CodeIgniter\Session\Handlers\FileHandler';
 

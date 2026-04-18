@@ -47,6 +47,12 @@
               <i class="fas fa-trash"></i>
             </a>
 
+            <?php if (isset($canEdit) && $canEdit): ?>
+              <a href="<?= site_url('admin/teams/create/' . encode_id($f['id'])) ?>" class="btn btn-success btn-sm mt-1">
+                <i class="fas fa-users"></i> Select Team
+              </a>
+            <?php endif; ?>
+
           </td>
 
         </tr>

@@ -11,6 +11,7 @@ use App\Models\PurchaseOrderApprovalModel;
 
 class PurchaseOrders extends BaseController
 {
+	use DecodesHashId;
 	protected $db;
 
 	public function __construct()
@@ -167,10 +168,12 @@ class PurchaseOrders extends BaseController
 	    ]);
 	}
 
-	public function view($id)
+	public function view($hash)
 	{
+	    $id = $this->decodeHash($hash);
 	    $poModel = new PurchaseOrderModel();
 	    $itemModel = new PurchaseOrderItemModel();
+	    $approvalModel = new PurchaseOrderApprovalModel();
 
 	    $data['po'] = $poModel->find($id);
 
@@ -180,11 +183,19 @@ class PurchaseOrders extends BaseController
 	        ->where('po_id',$id)
 	        ->findAll();
 
+	    $data['approvals'] = $approvalModel
+		    ->select('purchase_order_approvals.*, roles.name as role_name')
+		    ->join('roles','roles.id = purchase_order_approvals.approver_role_id','left')
+		    ->where('po_id',$id)
+		    ->orderBy('id','ASC')
+		    ->findAll();
+
 	    return view('admin/stock/po_view',$data);
 	}
 
-	public function edit($id)
+	public function edit($hash)
 	{
+	    $id = $this->decodeHash($hash);
 	    $poModel = new PurchaseOrderModel();
 	    $itemModel = new PurchaseOrderItemModel();
 	    $productModel = new ProductModel();
@@ -209,8 +220,9 @@ class PurchaseOrders extends BaseController
 	    return view('admin/stock/po_edit',$data);
 	}
 
-	public function pdf($id)
+	public function pdf($hash)
 	{
+	    $id = $this->decodeHash($hash);
 	    $poModel = new PurchaseOrderModel();
 	    $itemModel = new PurchaseOrderItemModel();
 	    $supplierModel = new SupplierModel();
@@ -257,8 +269,9 @@ class PurchaseOrders extends BaseController
 	    $dompdf->stream("PO_".$po['po_number'].".pdf",["Attachment"=>false]);
 	}
 
-	public function update($id)
+	public function update($hash)
 	{
+	    $id = $this->decodeHash($hash);
 	    $data = $this->request->getJSON(true);
 
 	    $poModel = new PurchaseOrderModel();
@@ -312,8 +325,9 @@ class PurchaseOrders extends BaseController
 	    ]);
 	}
 
-	public function approve($id)
+	public function approve($hash)
 	{
+		$id = $this->decodeHash($hash);
 		$poModel = new PurchaseOrderModel();
 		$approvalModel = new PurchaseOrderApprovalModel();
 		//dd($approvalModel->findAll());
@@ -339,7 +353,9 @@ class PurchaseOrders extends BaseController
 
 	    $userRoleId = session('role_id');
 
-	    // get next approval step
+	    // Decode the hashed po_id
+	    $poId = $this->decodeHash($data['po_id'] ?? '');
+	    $data['po_id'] = $poId;
 	    $approval = $approvalModel
 	        ->where('po_id',$data['po_id'])
 	        ->where('status','pending')
@@ -394,37 +410,50 @@ class PurchaseOrders extends BaseController
 	    }
 	}
 
-	public function receive($poId)
+	public function receive($hash)
 	{
+	    $poId = $this->decodeHash($hash);
 	    $poModel = new \App\Models\PurchaseOrderModel();
 	    $itemsModel = new \App\Models\PurchaseOrderItemModel();
 
 	    $po = $poModel->find($poId);
 
-		if($po['approval_status'] !== 'approved'){
-		    return redirect()->back()->with('error','PO not approved yet');
-		}
+	    // Ensure PO exists
+	    if (!$po) {
+	        throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+	    }
 
-	    $data['po'] = $poModel->find($poId);
+	    // Safely read approval_status (may be null if DB column missing)
+	    $approvalStatus = isset($po['approval_status']) ? strtolower($po['approval_status']) : null;
+
+	    if ($approvalStatus !== 'approved') {
+	        return redirect()->back()->with('error','PO not approved yet');
+	    }
+
+	    $data['po'] = $po;
 	    $data['items'] = $itemsModel
-		    ->select('purchase_order_items.*, products.name as product_name')
-		    ->join('products', 'products.id = purchase_order_items.product_id', 'left')
-		    ->where('purchase_order_items.po_id', $poId)
-		    ->findAll();
+	        ->select('purchase_order_items.*, products.name as product_name, IFNULL(purchase_order_items.location_id, 1) as location_id')
+	        ->join('products', 'products.id = purchase_order_items.product_id', 'left')
+	        ->where('purchase_order_items.po_id', $poId)
+	        ->findAll();
 
 	    return view('admin/stock/receive', $data);
 	}
 
 	public function processReceive()
 	{
-	    $poId = $this->request->getPost('po_id');
+	    $poId = $this->decodeHash($this->request->getPost('po_id') ?? '');
 	    $receiveQty = $this->request->getPost('receive_qty');
+		$unit_type = $this->request->getPost('unit_type');
+		$unit_size_ml = $this->request->getPost('unit_size_ml');
+		$serving_size_ml = $this->request->getPost('serving_size_ml');
 
 	    $poModel = new \App\Models\PurchaseOrderModel();
 	    $poItemsModel = new \App\Models\PurchaseOrderItemModel();
 	    $stockModel = new \App\Models\StockModel();
+		$productModel = new \App\Models\ProductModel();
 
-	    if(!is_array($receiveQty)){
+		if(!is_array($receiveQty)){
 		    return redirect()->back()->with('error','No quantities submitted');
 		}
 
@@ -435,42 +464,74 @@ class PurchaseOrders extends BaseController
 		}
 
 	    foreach ($receiveQty as $itemId => $qty) {
-
+	        $qty = (int)$qty;
 	        if ($qty <= 0) continue;
 
+	        // Get product_id for this item
 	        $item = $poItemsModel->find($itemId);
+	        $product_id = $item['product_id'];
 
-	        $remaining = $item['qty_ordered'] - $item['received_qty'];
+	        $unitType = $unit_type[$itemId] ?? 'bottle';
+	        $unitSize = (int)($unit_size_ml[$itemId] ?? 0);
+	        $servingSize = (int)($serving_size_ml[$itemId] ?? 0);
 
-	        // Prevent over receiving
-	        if ($qty > $remaining) {
-	            $qty = $remaining;
-	        }
+	        // Update product master record with these values
+	        $productModel->update($product_id, [
+	            'unit_type' => $unitType,
+	            'unit_size_ml' => $unitSize,
+	            'serving_size_ml' => $servingSize
+	        ]);
 
-	        // Update received qty
+	        // Calculate total ml and servings
+	        $total_ml = $qty * $unitSize;
+	        $total_servings = ($servingSize > 0) ? floor($total_ml / $servingSize) : 0;
+
+	        // Update received qty (allow over-receiving)
 	        $newReceived = $item['received_qty'] + $qty;
-
 	        $poItemsModel->update($itemId, [
 	            'received_qty' => $newReceived
 	        ]);
 
-	        // Update stock
-	        $stockModel->increaseStock($item['product_id'], $qty);
+	        // --- Update stock_level table in ml ---
+	        // Try to find the stock_level row for this product (and location if used)
+	        $location_id = $item['location_id'] ?? null; // adjust if you use locations
+	        $builder = \Config\Database::connect()->table('stock_levels');
+	        $where = ['product_id' => $product_id];
+	        if ($location_id !== null) {
+	            $where['location_id'] = $location_id;
+	        }
+	        $stockRow = $builder->where($where)->get()->getRowArray();
+	        if ($stockRow) {
+	            // Update existing row
+	            $builder->where('id', $stockRow['id'])->update([
+	                'quantity' => $stockRow['quantity'] + $total_ml
+	            ]);
+	        } else {
+	            // Insert new row
+	            $data = [
+	                'product_id' => $product_id,
+	                'quantity' => $total_ml
+	            ];
+	            if ($location_id !== null) {
+	                $data['location_id'] = $location_id;
+	            }
+	            $builder->insert($data);
+	        }
+	        // --- End update stock_level ---
 
+	        // Optionally, log or display this info for admin
+	        log_message('info', "Product $product_id: Received $qty units ($total_ml ml, $total_servings servings of $servingSize ml each)");
 	    }
 
 	    // Update PO status
 	    $items = $poItemsModel->where('po_id', $poId)->findAll();
-
 	    $complete = true;
-
 	    foreach ($items as $item) {
 	        if ($item['received_qty'] < $item['qty_ordered']) {
 	            $complete = false;
 	            break;
 	        }
 	    }
-
 	    $poModel->update($poId, [
 	        'status' => $complete ? 'completed' : 'partial'
 	    ]);

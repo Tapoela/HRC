@@ -8,14 +8,22 @@ use App\Controllers\Admin\BaseAdmin;
 
 class Fixtures extends BaseAdmin
 {
+    use DecodesHashId;
+
     public function index()
     {
         $fixtures = (new FixtureModel())
             ->orderBy('match_date', 'ASC')
             ->findAll();
-
+        $auth = service('authorization', false);
+        if ($auth && method_exists($auth, 'inGroup')) {
+            $canEdit = $auth->inGroup('coach');
+        } else {
+            $canEdit = (session('role_name') === 'coach' || session('role_id') == 2);
+        }
         return view('admin/fixtures/index', [
-            'fixtures' => $fixtures
+            'fixtures' => $fixtures,
+            'canEdit' => $canEdit
         ]);
     }
 
@@ -56,8 +64,10 @@ class Fixtures extends BaseAdmin
             ->with('success', 'Fixture updated');
     }
 
-    public function delete($id)
+    public function delete($hash)
     {
+        $id = $this->decodeHash($hash);
+
         (new FixtureModel())->delete($id);
 
         return redirect()->to('/admin/fixtures')

@@ -3,6 +3,8 @@
 
 <div class="container-fluid">
 
+	<a href="/admin/stock/po" class="btn btn-secondary mb-3">&larr; Back to PO List</a>
+
 	<div class="card">
 
 		<div class="card-header">
@@ -14,7 +16,7 @@
 			<table class="table table-bordered">
 
 				<tr>
-					th>Date</th>
+					<th>Date</th>
 					<td><?= $po['order_date'] ?></td>
 				</tr>
 

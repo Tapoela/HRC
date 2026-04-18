@@ -61,4 +61,18 @@ class PublicSite extends BaseController
             'title' => 'Contact | Heidelberg Rugby Club'
         ]);
     }
+
+    public function apiEvents()
+    {
+        $model = new \App\Models\EventModel();
+        $events = $model->orderBy('start','asc')->findAll();
+        return $this->response->setJSON($events);
+    }
+
+    public function events()
+    {
+        return view('public/events', [
+            'title' => 'Events | Heidelberg Rugby Club'
+        ]);
+    }
 }

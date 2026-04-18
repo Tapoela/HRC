@@ -18,6 +18,20 @@ class ProductModel extends Model
         'sell_price',
         'cost_price',
         'track_stock',
-        'active'
+        'active',
+        'unit_size_ml',
+        'serving_size_ml',
+        'stock'
     ];
+
+    /**
+     * Increment product stock by $qty
+     */
+    public function addStock($product_id, $qty)
+    {
+        $product = $this->find($product_id);
+        if (!$product) return false;
+        $newStock = (int)($product['stock'] ?? 0) + (int)$qty;
+        return $this->update($product_id, ['stock' => $newStock]);
+    }
 }

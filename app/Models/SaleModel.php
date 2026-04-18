@@ -14,6 +14,10 @@ class SaleModel extends Model
         'payment_type_id',
         'tab_id',
         'user_id',
-        'status'
+        'status',
+        'card_reference',
+        'created_at' // <-- ensure created_at can be set
     ];
+
+    protected $useTimestamps = false; // We'll set created_at manually
 }

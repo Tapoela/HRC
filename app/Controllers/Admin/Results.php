@@ -8,8 +8,8 @@ use App\Models\ResultModel;
 use App\Controllers\Admin\BaseAdmin;
 
 class Results extends BaseAdmin
-
 {
+    use DecodesHashId;
     public function index()
     {
         $results = (new ResultModel())
@@ -40,8 +40,9 @@ class Results extends BaseAdmin
             ->with('success', 'Result added successfully');
     }
 
-    public function delete($id)
+    public function delete($hash)
     {
+        $id = $this->decodeHash($hash);
         (new ResultModel())->delete($id);
 
         return redirect()->to('/admin/results')
