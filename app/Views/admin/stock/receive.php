@@ -17,6 +17,12 @@
 
 <div class="card-body">
 
+<div class="alert alert-info mb-3">
+    <strong>Unit Size</strong> = size of each bottle/can in ml (e.g. beer = 340, wine = 750).<br>
+    <strong>Serving Size</strong> = ml per pour/serving (e.g. whisky = 30, beer = 340).<br>
+    If the product was received before, these will be pre-filled automatically.
+</div>
+
 <table class="table table-bordered table-striped align-middle">
 
 <thead class="table-dark">
@@ -38,6 +44,13 @@
     $overReceived = $item['received_qty'] > $item['qty_ordered'];
     $itemId = $item['id'];
     $remaining = $item['qty_ordered'] - $item['received_qty'];
+
+    // Use saved product values as defaults
+    $unitType    = $item['unit_type']    ?? $item['product_unit_type']    ?? 'bottle';
+    $unitSizeMl  = $item['unit_size_ml'] ?? $item['product_unit_size_ml'] ?? '';
+    $servingSizeMl = $item['serving_size_ml'] ?? $item['product_serving_size_ml'] ?? '';
+
+    $alreadySet = !empty($unitSizeMl) && !empty($servingSizeMl);
 ?>
 
 <tr>
@@ -60,31 +73,33 @@
     <?php endif; ?>
 </td>
 <td>
-    <select name="unit_type[<?= $itemId ?>]" class="form-control" required>
-        <option value="bottle" <?= (isset($item['unit_type']) && $item['unit_type'] == 'bottle') ? 'selected' : '' ?>>Bottle</option>
-        <option value="can" <?= (isset($item['unit_type']) && $item['unit_type'] == 'can') ? 'selected' : '' ?>>Can</option>
-        <option value="case" <?= (isset($item['unit_type']) && $item['unit_type'] == 'case') ? 'selected' : '' ?>>Case</option>
-        <option value="ml" <?= (isset($item['unit_type']) && $item['unit_type'] == 'ml') ? 'selected' : '' ?>>ml</option>
-        <option value="L" <?= (isset($item['unit_type']) && $item['unit_type'] == 'L') ? 'selected' : '' ?>>Litre</option>
+    <select name="unit_type[<?= $itemId ?>]" class="form-control">
+        <?php foreach(['bottle'=>'Bottle','can'=>'Can','case'=>'Case','ml'=>'ml','L'=>'Litre'] as $val=>$label): ?>
+        <option value="<?= $val ?>" <?= $unitType==$val?'selected':'' ?>><?= $label ?></option>
+        <?php endforeach ?>
     </select>
 </td>
 <td>
     <input type="number"
            class="form-control"
            name="unit_size_ml[<?= $itemId ?>]"
-           value="<?= isset($item['unit_size_ml']) ? esc($item['unit_size_ml']) : '' ?>"
+           value="<?= esc($unitSizeMl) ?>"
            min="1"
-           placeholder="Unit Size (ml)"
-           required>
+           placeholder="e.g. 340">
+    <?php if($alreadySet): ?>
+        <small class="text-muted">Saved on product</small>
+    <?php endif ?>
 </td>
 <td>
     <input type="number"
            class="form-control"
            name="serving_size_ml[<?= $itemId ?>]"
-           value="<?= isset($item['serving_size_ml']) ? esc($item['serving_size_ml']) : '' ?>"
+           value="<?= esc($servingSizeMl) ?>"
            min="1"
-           placeholder="Serving Size (ml)"
-           required>
+           placeholder="e.g. 30">
+    <?php if($alreadySet): ?>
+        <small class="text-muted">Saved on product</small>
+    <?php endif ?>
 </td>
 <td>
     <input type="number" 

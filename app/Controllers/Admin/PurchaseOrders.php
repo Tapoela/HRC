@@ -447,7 +447,7 @@ class PurchaseOrders extends BaseController
 
 	        $data['po'] = $po;
 	        $data['items'] = $itemsModel
-	            ->select('purchase_order_items.*, products.name as product_name')
+	            ->select('purchase_order_items.*, products.name as product_name, products.unit_type as product_unit_type, products.unit_size_ml as product_unit_size_ml, products.serving_size_ml as product_serving_size_ml')
 	            ->join('products', 'products.id = purchase_order_items.product_id', 'left')
 	            ->where('purchase_order_items.po_id', $poId)
 	            ->findAll();
