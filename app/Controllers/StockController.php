@@ -87,11 +87,27 @@ class StockController extends BaseController
         $qtys = $this->request->getPost('qty'); // array: product_id => qty
         $userId = session('user_id') ?? 1;
 
-        $stockModel = new \App\Models\StockModel();
+        $stockModel   = new \App\Models\StockModel();
+        $productModel = new \App\Models\ProductModel();
         $db = \Config\Database::connect();
+
+        $unitTypes     = $this->request->getPost('unit_type')      ?? [];
+        $unitSizes     = $this->request->getPost('unit_size_ml')   ?? [];
+        $servingSizes  = $this->request->getPost('serving_size_ml') ?? [];
+
         $db->transStart();
         foreach ($qtys as $productId => $qty) {
             $qty = (int)$qty;
+
+            // Always save unit/serving size back to product master
+            $productUpdate = [];
+            if (!empty($unitTypes[$productId]))    $productUpdate['unit_type']       = $unitTypes[$productId];
+            if (!empty($unitSizes[$productId]))    $productUpdate['unit_size_ml']    = (int)$unitSizes[$productId];
+            if (!empty($servingSizes[$productId])) $productUpdate['serving_size_ml'] = (int)$servingSizes[$productId];
+            if (!empty($productUpdate)) {
+                $productModel->update($productId, $productUpdate);
+            }
+
             if ($qty > 0 && $from != $to) {
                 // Deduct from source
                 $row = $stockModel->where(['product_id'=>$productId,'location_id'=>$from])->first();
@@ -107,13 +123,13 @@ class StockController extends BaseController
                 }
                 // Log movement
                 $db->table('stock_movements')->insert([
-                    'product_id' => $productId,
+                    'product_id'    => $productId,
                     'location_from' => $from,
-                    'location_to' => $to,
-                    'qty' => $qty,
+                    'location_to'   => $to,
+                    'qty'           => $qty,
                     'movement_type' => 'transfer',
-                    'created_at' => date('Y-m-d H:i:s'),
-                    'user_id' => $userId
+                    'created_at'    => date('Y-m-d H:i:s'),
+                    'user_id'       => $userId
                 ]);
             }
         }
