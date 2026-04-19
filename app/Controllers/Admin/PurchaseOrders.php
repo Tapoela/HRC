@@ -412,32 +412,42 @@ class PurchaseOrders extends BaseController
 
 	public function receive($hash)
 	{
-	    $poId = $this->decodeHash($hash);
-	    $poModel = new \App\Models\PurchaseOrderModel();
-	    $itemsModel = new \App\Models\PurchaseOrderItemModel();
+	    try {
+	        $poId = $this->decodeHash($hash);
+	        $poModel = new \App\Models\PurchaseOrderModel();
+	        $itemsModel = new \App\Models\PurchaseOrderItemModel();
 
-	    $po = $poModel->find($poId);
+	        $po = $poModel->find($poId);
 
-	    // Ensure PO exists
-	    if (!$po) {
-	        throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+	        // Ensure PO exists
+	        if (!$po) {
+	            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+	        }
+
+	        // Safely read approval_status (may be null if DB column missing)
+	        $approvalStatus = isset($po['approval_status']) ? strtolower($po['approval_status']) : null;
+
+	        if ($approvalStatus !== 'approved') {
+	            return redirect()->back()->with('error','PO not approved yet');
+	        }
+
+	        $data['po'] = $po;
+	        $data['items'] = $itemsModel
+	            ->select('purchase_order_items.*, products.name as product_name')
+	            ->join('products', 'products.id = purchase_order_items.product_id', 'left')
+	            ->where('purchase_order_items.po_id', $poId)
+	            ->findAll();
+
+	        return view('admin/stock/receive', $data);
+	
+	    } catch (\Throwable $e) {
+	        // Log full exception for diagnostics
+	        log_message('error', 'PurchaseOrders::receive error for hash [' . ($hash ?? '') . ']: ' . $e->getMessage());
+	        log_message('error', $e->getTraceAsString());
+
+	        // Redirect back to PO list with a generic error
+	        return redirect()->to(site_url('admin/purchaseorders'))->with('error', 'Unable to open Receive page. See logs for details.');
 	    }
-
-	    // Safely read approval_status (may be null if DB column missing)
-	    $approvalStatus = isset($po['approval_status']) ? strtolower($po['approval_status']) : null;
-
-	    if ($approvalStatus !== 'approved') {
-	        return redirect()->back()->with('error','PO not approved yet');
-	    }
-
-	    $data['po'] = $po;
-	    $data['items'] = $itemsModel
-	        ->select('purchase_order_items.*, products.name as product_name, IFNULL(purchase_order_items.location_id, 1) as location_id')
-	        ->join('products', 'products.id = purchase_order_items.product_id', 'left')
-	        ->where('purchase_order_items.po_id', $poId)
-	        ->findAll();
-
-	    return view('admin/stock/receive', $data);
 	}
 
 	public function processReceive()
@@ -493,14 +503,12 @@ class PurchaseOrders extends BaseController
 	        ]);
 
 	        // --- Update stock_level table in ml ---
-	        // Try to find the stock_level row for this product (and location if used)
-	        $location_id = $item['location_id'] ?? null; // adjust if you use locations
+	        // Always receive into location_id = 1 (default/main location)
+	        $location_id = 1;
 	        $builder = \Config\Database::connect()->table('stock_levels');
-	        $where = ['product_id' => $product_id];
-	        if ($location_id !== null) {
-	            $where['location_id'] = $location_id;
-	        }
-	        $stockRow = $builder->where($where)->get()->getRowArray();
+	        $stockRow = $builder->where('product_id', $product_id)
+	                            ->where('location_id', $location_id)
+	                            ->get()->getRowArray();
 	        if ($stockRow) {
 	            // Update existing row
 	            $builder->where('id', $stockRow['id'])->update([
@@ -508,14 +516,11 @@ class PurchaseOrders extends BaseController
 	            ]);
 	        } else {
 	            // Insert new row
-	            $data = [
-	                'product_id' => $product_id,
-	                'quantity' => $total_ml
-	            ];
-	            if ($location_id !== null) {
-	                $data['location_id'] = $location_id;
-	            }
-	            $builder->insert($data);
+	            $builder->insert([
+	                'product_id'  => $product_id,
+	                'location_id' => $location_id,
+	                'quantity'    => $total_ml
+	            ]);
 	        }
 	        // --- End update stock_level ---
 

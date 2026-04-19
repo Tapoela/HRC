@@ -14,6 +14,7 @@ class PurchaseOrderItemModel extends Model
         'product_id',
         'qty_ordered',
         'cost_price',
-        'received_qty'
+        'received_qty',
+        'location_id',
     ];
 }

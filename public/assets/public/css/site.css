@@ -12,32 +12,14 @@ h1,h2{font-family:Oswald,Inter,sans-serif;letter-spacing:.02em}
 .container{max-width:1200px;margin:auto;padding:1.25rem}
 
 /* ===== Header ===== */
-.site-header{
-  background:var(--dark);
-  border-bottom:4px solid var(--accent);
-  position:sticky;
-  top:0;
-  z-index:1100;
-}
-
-.site-header .container{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  position:relative;
-  z-index:1101;
-}
-
+.site-header{background:var(--dark);border-bottom:4px solid var(--accent);position:relative;z-index:1100}
+.site-header .container{display:flex;align-items:center;justify-content:space-between;position:relative;z-index:1101}
 .brand {
   display: flex;
   align-items: center;
   gap: 0.6rem;
   text-decoration: none;
   color: #fff;
-  font-weight: 700;
-  font-size: 16px;
-  white-space: nowrap;
-  flex-shrink: 0;
 }
 
 .club-logo {
@@ -58,45 +40,10 @@ h1,h2{font-family:Oswald,Inter,sans-serif;letter-spacing:.02em}
   .protea-mark {
     height: 22px;
   }
-  .brand span {
-    display: none;
-  }
 }
 
-/* Navigation Menu */
-.site-nav {
-  display: flex;
-  align-items: center;
-  gap: 1.25rem;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.site-nav a {
-  color: #fff;
-  text-decoration: none;
-  font-weight: 600;
-  font-size: 14px;
-  transition: all 0.3s ease;
-  padding: 8px 12px;
-  border-radius: 4px;
-}
-
-.site-nav a:hover {
-  color: #b11226;
-  background-color: rgba(177, 18, 38, 0.1);
-}
-
-.admin-link {
-  color: var(--accent);
-  font-weight: 700;
-}
-
-.admin-link:hover {
-  color: #fff;
-  background-color: #b11226;
-}
+.site-nav a { color: #fff; text-decoration: none; font-weight: 600; }
+.admin-link { color: var(--accent); }
 
 /* Burger button — hidden on desktop, shown on mobile */
 .nav-toggle {
@@ -106,23 +53,37 @@ h1,h2{font-family:Oswald,Inter,sans-serif;letter-spacing:.02em}
   color: #fff;
   font-size: 1.8rem;
   cursor: pointer;
-  padding: 8px;
+  padding: 0.25rem 0.5rem;
   line-height: 1;
-  z-index: 1102;
-  transition: color 0.3s ease;
+  z-index: 2200;
 }
 
-.nav-toggle:hover {
-  color: #b11226;
+/* Force header to be relative so dropdown anchors to it */
+.site-header {
+  position: relative;
+  z-index: 2000;
+}
+.site-header .container {
+  position: relative;
+  z-index: 2001;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
-/* Mobile Navigation */
+/* Desktop: show nav inline */
+.site-header .site-nav {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
 @media (max-width: 768px) {
-  .nav-toggle {
-    display: block;
-  }
+  /* Show burger */
+  .nav-toggle { display: block; }
 
-  .site-nav {
+  /* Hide nav by default, show as dropdown when .open */
+  .site-header .site-nav {
     display: none;
     position: absolute;
     top: 100%;
@@ -132,31 +93,30 @@ h1,h2{font-family:Oswald,Inter,sans-serif;letter-spacing:.02em}
     background: #111;
     border-top: 2px solid var(--accent);
     border-radius: 0 0 8px 8px;
-    z-index: 1100;
+    z-index: 2100;
     flex-direction: column;
     padding: 0.5rem 0;
     gap: 0;
   }
 
-  .site-nav.open {
+  .site-header .site-nav.open {
     display: flex;
   }
 
-  .site-nav a {
+  .site-header .site-nav a {
     display: block;
-    padding: 14px 16px;
+    padding: 0.85rem 1.5rem;
     margin: 0;
     border-bottom: 1px solid rgba(255,255,255,0.10);
-    font-size: 15px;
+    font-size: 1rem;
     color: #fff;
-    border-radius: 0;
   }
 
-  .site-nav a:last-child {
+  .site-header .site-nav a:last-child {
     border-bottom: none;
   }
 
-  .site-nav a:active {
+  .site-header .site-nav a:active {
     background: rgba(177, 18, 38, 0.2);
   }
 }
@@ -173,6 +133,7 @@ h1,h2{font-family:Oswald,Inter,sans-serif;letter-spacing:.02em}
   z-index: 1;
 }
 
+/* Strong rugby diagonal overlay */
 .hero::before {
   content: '';
   position: absolute;
@@ -185,6 +146,7 @@ h1,h2{font-family:Oswald,Inter,sans-serif;letter-spacing:.02em}
   );
 }
 
+/* Protea watermark */
 .hero::after {
   content: '';
   position: absolute;
@@ -216,9 +178,11 @@ h1,h2{font-family:Oswald,Inter,sans-serif;letter-spacing:.02em}
   opacity: 0.95;
 }
 
+
 /* ===== Sections ===== */
 .values{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:2rem auto}
-.card{background:var(--grey);padding:1.5rem;border-left:6px solid var(--accent);box-shadow:var(--shadow);font-weight:700}
+.card{background:var(--grey);padding:1.5rem;border-left:6px solid var(--accent);
+  box-shadow:var(--shadow);font-weight:700}
 
 /* ===== Footer ===== */
 .site-footer{background:var(--dark);color:#fff;margin-top:3rem}
@@ -298,7 +262,6 @@ h1,h2{font-family:Oswald,Inter,sans-serif;letter-spacing:.02em}
   color:var(--accent);
   font-weight:600;
 }
-
 .fixture-month{
   margin-top:2rem;
   padding-bottom:.4rem;
@@ -311,277 +274,190 @@ h1,h2{font-family:Oswald,Inter,sans-serif;letter-spacing:.02em}
   font-weight:700;
   color:#333;
 }
-
-/* ===== ULTRA HERO & REGISTRATION ===== */
+/* ULTRA HERO */
 .ultra-register-hero{
-  background:linear-gradient(120deg,#0a2a66,#b11226);
-  padding:100px 0;
-  position:relative;
-  overflow:hidden;
+background:linear-gradient(120deg,#0a2a66,#b11226);
+padding:100px 0;
+position:relative;
+overflow:hidden;
 }
 
 .ultra-register-hero::after{
-  content:'';
-  position:absolute;
-  right:-5%;
-  bottom:-10%;
-  width:520px;
-  height:520px;
-  background:url('../images/protea.png') no-repeat center/contain;
-  opacity:.05;
-  pointer-events: none;
+content:'';
+position:absolute;
+right:-5%;
+bottom:-10%;
+width:520px;
+height:520px;
+background:url('../images/protea.png') no-repeat center/contain;
+opacity:.05;
 }
 
-/* ===== Wizard Card (SINGLE DEFINITION - WHITE) ===== */
+/* Wizard Card */
 .wizard-card{
-  background:#fff;
-  border-radius:14px;
-  padding:40px;
-  box-shadow:0 25px 60px rgba(0,0,0,.6);
-  border-top:4px solid #b11226;
-  color:#000;
-  position:relative;
-  overflow:hidden;
-  max-width:650px;
-  margin:auto;
+background:rgba(255,255,255,.96);
+padding:40px;
+border-radius:16px;
+box-shadow:0 30px 90px rgba(0,0,0,.3);
+max-width:650px;
+margin:auto;
+}
+
+/* Steps */
+.wizard-step{
+display:none;
+animation:fadeIn .4s ease;
+}
+
+.wizard-step.active{
+display:block;
+}
+
+@keyframes fadeIn{
+from{opacity:0;transform:translateY(20px);}
+to{opacity:1;transform:translateY(0);}
+}
+
+/* Inputs */
+.ultra-input{
+border-radius:10px;
+padding:12px;
+}
+
+.ultra-input:focus{
+border-color:#b11226;
+box-shadow:0 0 0 .2rem rgba(177,18,38,.2);
+}
+
+/* Button */
+.btn-ultra-rugby{
+background:#b11226;
+color:#fff;
+border-radius:10px;
+padding:12px 28px;
+font-weight:800;
+}
+/* ===== ULTRA RUGBY WIZARD ===== */
+
+.wizard-card{
+    background:#0b0b0b;
+    border-radius:14px;
+    padding:40px;
+    box-shadow:0 25px 60px rgba(0,0,0,.6);
+    border-top:4px solid #b11226;
+    color:#fff;
+    position:relative;
+    overflow:hidden;
 }
 
 .wizard-title{
-  font-family:Oswald;
-  text-transform:uppercase;
-  margin-bottom:25px;
-  color:#000;
+    font-family:Oswald;
+    text-transform:uppercase;
+    margin-bottom:25px;
 }
 
 /* Progress bar */
 .wizard-progress{
-  height:6px;
-  background:#e0e0e0;
-  border-radius:5px;
-  margin-bottom:25px;
-  overflow:hidden;
+    height:6px;
+    background:#1c1c1c;
+    border-radius:5px;
+    margin-bottom:25px;
+    overflow:hidden;
 }
 
 .wizard-progress-bar{
-  height:100%;
-  width:33%;
-  background:linear-gradient(90deg,#0a2a66,#b11226);
-  transition:width .4s ease;
+    height:100%;
+    width:33%;
+    background:linear-gradient(90deg,#0a2a66,#b11226);
+    transition:width .4s ease;
 }
 
 /* Step indicators */
 .wizard-steps-indicator{
-  text-align:center;
-  margin-bottom:25px;
+    text-align:center;
+    margin-bottom:25px;
 }
 
 .step-dot{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  width:35px;
-  height:35px;
-  border-radius:50%;
-  background:#e0e0e0;
-  margin:0 6px;
-  font-weight:bold;
-  transition:.3s;
-  color:#000;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:35px;
+    height:35px;
+    border-radius:50%;
+    background:#222;
+    margin:0 6px;
+    font-weight:bold;
+    transition:.3s;
 }
 
 .step-dot.active{
-  background:#b11226;
-  color:#fff;
-  transform:scale(1.1);
+    background:#b11226;
+    transform:scale(1.1);
 }
 
 /* Step animation */
 .wizard-step{
-  display:none;
-  opacity:0;
-  transform:translateX(40px);
-  transition:.4s ease;
+    display:none;
+    opacity:0;
+    transform:translateX(40px);
+    transition:.4s ease;
 }
 
 .wizard-step.active{
-  display:block;
-  opacity:1;
-  transform:translateX(0);
+    display:block;
+    opacity:1;
+    transform:translateX(0);
 }
 
-/* Form styling */
-.wizard-step label {
-  display:block;
-  margin-bottom:8px;
-  font-weight:600;
-  color:#000;
-  font-size:14px;
-  touch-action:manipulation;
-  cursor:pointer;
-}
-
-.wizard-step .form-group {
-  margin-bottom:18px;
-}
-
-.wizard-step small {
-  display:block;
-  margin-top:4px;
-  font-size:13px;
-}
-
-/* Input styling */
+/* Rugby input styling */
 .ultra-input{
-  background:#fff;
-  border:1px solid #ccc;
-  color:#000;
-  border-radius:10px;
-  padding:12px 14px;
-  font-size:16px;
-  width:100%;
-  min-height:44px;
-  touch-action:manipulation;
-  -webkit-appearance:none;
-  -moz-appearance:none;
-  appearance:none;
-}
-
-.ultra-input:hover {
-  border-color:#b11226;
+    background:#121212;
+    border:1px solid #333;
+    color:#fff;
 }
 
 .ultra-input:focus{
-  outline:none;
-  border-color:#b11226;
-  box-shadow:0 0 10px rgba(177,18,38,.3);
+    border-color:#b11226;
+    box-shadow:0 0 10px rgba(177,18,38,.3);
 }
 
-.ultra-input:disabled {
-  background:#f0f0f0;
-  color:#999;
-  cursor:not-allowed;
-}
-
-/* Button styling */
 .btn-ultra-rugby{
-  background:#b11226;
-  border:none;
-  font-weight:700;
-  text-transform:uppercase;
-  color:#fff;
-  padding:12px 28px;
-  border-radius:10px;
-  cursor:pointer;
-  font-size:14px;
-  min-height:44px;
-  touch-action:manipulation;
-  transition:.2s;
+    background:#b11226;
+    border:none;
+    font-weight:700;
+    text-transform:uppercase;
 }
-
-.btn-ultra-rugby:hover {
-  background:#8e0c1f;
-}
-
-.btn-ultra-rugby:disabled {
-  background:#ccc;
-  cursor:not-allowed;
-}
-
-.btn-secondary {
-  background:#666;
-  border:none;
-  font-weight:700;
-  color:#fff;
-  padding:12px 28px;
-  border-radius:10px;
-  cursor:pointer;
-  font-size:14px;
-  min-height:44px;
-  touch-action:manipulation;
-  transition:.2s;
-}
-
-.btn-secondary:hover {
-  background:#555;
-}
-
-.btn-ultra-rugby-outline{
-  border:2px solid #b11226;
-  color:#b11226;
-  background:transparent;
-  font-weight:700;
-  padding:10px 26px;
-  border-radius:10px;
-  cursor:pointer;
-  font-size:14px;
-  min-height:44px;
-  touch-action:manipulation;
-  transition:.2s;
-}
-
-.btn-ultra-rugby-outline:hover{
-  background:#b11226;
-  color:#fff;
-}
-
-/* ===== SUCCESS PANEL ===== */
+/* SUCCESS PANEL */
 .register-success{
-  padding:60px 20px;
-  text-align:center;
-  color:#000;
+    padding:60px 20px;
 }
 
 .success-title{
-  font-family:Oswald;
-  text-transform:uppercase;
-  font-size:32px;
-  color:#b11226;
-  margin:0 0 20px;
+    font-family:Oswald;
+    text-transform:uppercase;
+    font-size:32px;
+    color:#fff;
 }
 
 .register-success p{
-  color:#333;
-  font-size:16px;
-  line-height:1.6;
+    color:#ccc;
+    font-size:16px;
 }
 
-/* ===== Mobile/Touch Optimization ===== */
-@media (max-width: 768px) {
+.btn-ultra-rugby-outline{
+    border:2px solid #b30000;
+    color:#b30000;
+    background:transparent;
+}
+
+.btn-ultra-rugby-outline:hover{
+    background:#b30000;
+    color:white;
+}
+@media (max-width: 900px) {
   .wizard-card {
-    padding:25px;
-    max-width:100%;
-    margin:20px;
-  }
-
-  .ultra-input {
-    min-height:48px;
-    font-size:16px;
-    padding:14px;
-  }
-
-  .btn-ultra-rugby,
-  .btn-secondary,
-  .btn-ultra-rugby-outline {
-    min-height:48px;
-    width:100%;
-    font-size:15px;
-    padding:14px 20px;
-  }
-
-  .wizard-step label {
-    font-size:15px;
-  }
-
-  .wizard-title {
-    font-size:24px;
-  }
-
-  .d-flex {
-    flex-direction:column;
-    gap:10px;
-  }
-
-  .d-flex button {
-    width:100%;
+    position: relative;
+    z-index: 3000 !important;
   }
 }
