@@ -116,7 +116,11 @@
 							<?php if(
 							    strtolower($order['approval_status']) !== 'approved' &&
 							    $order['status'] !== 'completed' &&
-							    $order['next_approver_role_id'] == session('role_id')
+							    (
+							        $order['next_approver_role_id'] == session('role_id') ||
+							        $order['next_approver_role_id'] === null ||
+							        session('role_id') == 1
+							    )
 							): ?>
 
 							<a href="<?= site_url('admin/purchaseorders/approve/'.encode_id($order['id'])) ?>"
