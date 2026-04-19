@@ -18,8 +18,8 @@
 <div class="card-body">
 
 <div class="alert alert-info mb-3">
-    <strong>Unit Size</strong> = size of each bottle/can in ml (e.g. beer = 340, wine = 750).<br>
-    <strong>Serving Size</strong> = ml per pour/serving (e.g. whisky = 30, beer = 340).<br>
+    <strong>Unit Size</strong> = size of each bottle/can in ml (e.g. beer = 340ml, wine = 750ml, spirits = 750ml).<br>
+    <strong>Serving Size</strong> = ml per serving — SA standard shot = <strong>25ml</strong> (e.g. spirits = 25, beer = 340, wine = 150).<br>
     If the product was received before, these will be pre-filled automatically.
 </div>
 
@@ -96,7 +96,7 @@
            name="serving_size_ml[<?= $itemId ?>]"
            value="<?= esc($servingSizeMl) ?>"
            min="1"
-           placeholder="e.g. 30">
+           placeholder="e.g. 25 (SA shot)"
     <?php if($alreadySet): ?>
         <small class="text-muted">Saved on product</small>
     <?php endif ?>
