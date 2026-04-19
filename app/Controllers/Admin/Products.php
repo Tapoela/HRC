@@ -67,15 +67,15 @@ class Products extends BaseController
         $productModel = new ProductModel();
 
         $productModel->insert([
-
-            'name' => $this->request->getPost('name'),
-            'category_id' => (int)$this->request->getPost('category_id'),
-            'product_type' => $this->request->getPost('product_type'),
-            'unit_type' => $this->request->getPost('unit_type'),
-            'sell_price' => $this->request->getPost('sell_price'),
-            'cost_price' => $this->request->getPost('cost_price'),
-            'active' => 1
-
+            'name'           => $this->request->getPost('name'),
+            'category_id'    => (int)$this->request->getPost('category_id'),
+            'product_type'   => $this->request->getPost('product_type'),
+            'unit_type'      => $this->request->getPost('unit_type'),
+            'unit_size_ml'   => $this->request->getPost('unit_size_ml')   ?: null,
+            'serving_size_ml'=> $this->request->getPost('serving_size_ml') ?: null,
+            'sell_price'     => $this->request->getPost('sell_price'),
+            'cost_price'     => $this->request->getPost('cost_price'),
+            'active'         => 1
         ]);
 
         return redirect()->to('admin/products');
@@ -124,13 +124,15 @@ class Products extends BaseController
         }
 
         $productModel->update($id, [
-            'name'         => $this->request->getPost('name'),
-            'category_id'  => (int)$this->request->getPost('category_id'),
-            'product_type' => $this->request->getPost('product_type'),
-            'unit_type'    => $this->request->getPost('unit_type'),
-            'sell_price'   => $this->request->getPost('sell_price'),
-            'cost_price'   => $this->request->getPost('cost_price'),
-            'active'       => $this->request->getPost('active') !== null ? 1 : 0,
+            'name'            => $this->request->getPost('name'),
+            'category_id'     => (int)$this->request->getPost('category_id'),
+            'product_type'    => $this->request->getPost('product_type'),
+            'unit_type'       => $this->request->getPost('unit_type'),
+            'unit_size_ml'    => $this->request->getPost('unit_size_ml')    ?: null,
+            'serving_size_ml' => $this->request->getPost('serving_size_ml') ?: null,
+            'sell_price'      => $this->request->getPost('sell_price'),
+            'cost_price'      => $this->request->getPost('cost_price'),
+            'active'          => $this->request->getPost('active') !== null ? 1 : 0,
         ]);
 
         return redirect()->to('admin/products')->with('success', 'Product updated successfully.');
