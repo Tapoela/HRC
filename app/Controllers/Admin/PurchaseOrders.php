@@ -362,16 +362,30 @@ class PurchaseOrders extends BaseController
 	        ->orderBy('id','ASC')
 	        ->first();
 
-	    // ✅ FIX: prevent crash
+	    // If no pending approval row exists, admin (role_id=1) can approve directly
 	    if(!$approval){
-	        return $this->response->setJSON([
-	            'status'=>'error',
-	            'message'=>'No pending approval step found'
+	        if($userRoleId != 1){
+	            return $this->response->setJSON([
+	                'status'=>'error',
+	                'message'=>'No pending approval step found'
+	            ]);
+	        }
+	        // Admin direct approval — insert a completed approval row
+	        $approvalModel->insert([
+	            'po_id'            => $data['po_id'],
+	            'approver_role_id' => $userRoleId,
+	            'approver_user_id' => session('user_id'),
+	            'signature'        => $data['signature'],
+	            'approved_at'      => date('Y-m-d H:i:s'),
+	            'status'           => 'approved',
+	            'approval_status'  => 'approved',
 	        ]);
+	        $poModel->update($data['po_id'], ['approval_status' => 'approved']);
+	        return $this->response->setJSON(['status' => 'completed']);
 	    }
 
-	    // ✅ role validation
-	    if($approval['approver_role_id'] != $userRoleId){
+	    // ✅ role validation — admin can approve any step
+	    if($approval['approver_role_id'] != $userRoleId && $userRoleId != 1){
 	        return $this->response->setJSON([
 	            'status'=>'error',
 	            'message'=>'You are not allowed to approve this step'

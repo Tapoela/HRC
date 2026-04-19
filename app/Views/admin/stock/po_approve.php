@@ -152,8 +152,11 @@ foreach($approvals as $a){
 
 <?php if(
     $po['approval_status'] != 'approved' &&
-    $nextApproval &&
-    $nextApproval['approver_role_id'] == $userRoleId
+    (
+        ($nextApproval && $nextApproval['approver_role_id'] == $userRoleId) ||
+        $nextApproval === null ||
+        $userRoleId == 1
+    )
 ): ?>
 
 <button onclick="approvePO()" class="btn btn-success">
