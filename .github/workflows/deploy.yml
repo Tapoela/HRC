@@ -10,25 +10,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Deploy via FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
         with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./
-          server-dir: /public_html/
-          exclude: |
-            **/.git*
-            **/.git*/**
-            **/node_modules/**
-            **/writable/logs/**
-            **/writable/session/**
-            **/writable/cache/**
-            **/.env
-            **/app (2).zip
-            **/app (3).zip
-            **/app.zip
+          host: heidelbergrugbyclub.co.za
+          username: heidels5d4a5
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 24
+          script: |
+            cd /home/heidels5d4a5/demo.heidelbergrugbyclub.co.za
+            git pull origin main
+            php spark migrate --all
